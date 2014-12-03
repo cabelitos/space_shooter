@@ -100,15 +100,10 @@ SPACE_SHIP *space_ship_create(int display_width, int display_height) {
   return ss;
 }
 
-void space_ship_move(SPACE_SHIP *ss, KEYS pressed_keys) {
+static void _space_ship_move(SPACE_SHIP *ss, KEYS pressed_keys) {
   POINT p;
   bool automaticStopDown = false;
   bool automaticStopUp = false;
-
-  if (!ss) {
-    printf("Space ship is null!\n");
-    return;
-  }
 
   p = ss->center;
 
@@ -137,13 +132,8 @@ void space_ship_move(SPACE_SHIP *ss, KEYS pressed_keys) {
     _set_position(ss, p.x, p.y);
 }
 
-void space_ship_rotate(SPACE_SHIP *ss, KEYS pressed_keys) {
+static void _space_ship_rotate(SPACE_SHIP *ss, KEYS pressed_keys) {
   float degrees;
-
-  if (!ss) {
-    printf("Space ship is null!\n");
-    return;
-  }
 
   if (pressed_keys & LEFT)
     degrees = -SPACE_SHIP_ROTATION_STEP;
@@ -158,6 +148,15 @@ void space_ship_rotate(SPACE_SHIP *ss, KEYS pressed_keys) {
     ss->rotation_degrees = 0.0f;
 
   _rotate_space_ship(ss, degrees);
+}
+
+void space_ship_notify_keys(SPACE_SHIP *ss, KEYS pressed_keys) {
+  if (!ss) {
+    printf("Space ship is null!\n");
+    return;
+  }
+  _space_ship_move(ss, pressed_keys);
+  _space_ship_rotate(ss, pressed_keys);
 }
 
 void space_ship_draw(SPACE_SHIP *ss) {

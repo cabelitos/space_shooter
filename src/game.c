@@ -115,8 +115,7 @@ void game_run(GAME *game) {
       }
     }
 
-    space_ship_move(game->ss, pressed_keys);
-    space_ship_rotate(game->ss, pressed_keys);
+    space_ship_notify_keys(game->ss, pressed_keys);
 
     if (redraw && al_event_queue_is_empty(game->events)) {
       redraw = false;
