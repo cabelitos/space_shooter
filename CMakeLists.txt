@@ -27,6 +27,6 @@ pkg_check_modules(ALLEGRO_MAIN REQUIRED allegro_main-5)
 include_directories(${ALLEGRO_INCLUDE_DIRS} ${ALLEGRO_PRIMITIVES_INCLUDE_DIRS} ${ALLEGRO_MAIN_INCLUDE_DIRS})
 link_directories(${ALLEGRO_LIBRARY_DIRS}  ${ALLEGRO_PRIMITIVES_LIBRARY_DIRS} ${ALLEGRO_MAIN_LIBRARY_DIRS})
 
-add_executable(space_shooter src/main.c src/game.c src/space_ship.c src/float_compare.c)
+add_executable(space_shooter src/main.c src/game.c src/space_ship.c src/float_compare.c src/cannon.c src/utils.c)
 
 target_link_libraries(space_shooter ${ALLEGRO_LIBRARIES} ${ALLEGRO_PRIMITIVES_LIBRARIES} ${ALLEGRO_MAIN_LIBRARIES})

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "keys.h"
+#include "utils.h"
 #include "game.h"
 #include "space_ship.h"
 
@@ -78,6 +78,7 @@ void game_run(GAME *game) {
   pressed_keys = NOT_SET;
 
   while (1) {
+    pressed_keys &= ~SPACE;
     al_wait_for_event(game->events, &event);
     if (event.type == ALLEGRO_EVENT_TIMER)
       redraw = true;
@@ -111,6 +112,9 @@ void game_run(GAME *game) {
 	break;
       case ALLEGRO_KEY_RIGHT:
 	pressed_keys &= ~RIGHT;
+	break;
+      case ALLEGRO_KEY_SPACE:
+	pressed_keys |= SPACE;
 	break;
       }
     }

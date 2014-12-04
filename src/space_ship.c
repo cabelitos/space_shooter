@@ -7,6 +7,7 @@
 
 #include "float_compare.h"
 #include "space_ship.h"
+#include "cannon.h"
 
 //This height should be scaled.
 #define SPACE_SHIP_HEIGHT (24.0f)
@@ -17,11 +18,6 @@
 #define MAX_ACCELERATION (10.0f)
 #define ACCELIERATION_STEP (0.02f)
 
-typedef struct _POINT {
-  float x;
-  float y;
-} POINT;
-
 struct _SPACE_SHIP {
   /* Where the tip of the space ship is pointing */
   POINT tip;
@@ -31,47 +27,33 @@ struct _SPACE_SHIP {
   POINT left_p;
   POINT right_p;
 
-  float display_width;
-  float display_height;
+  POINT display;
 
   float rotation_degrees;
   float acceleration;
+
+  CANNON *c;
 };
 
-POINT _rotate_formula(POINT p, POINT center, float degrees) {
-  POINT aux;
-
-  p.x -= center.x;
-  p.y -= center.y;
-
-  aux.x = (p.x * cosf(degrees)) - (p.y * sinf(degrees));
-  aux.y = (p.x * sinf(degrees)) + (p.y * cosf(degrees));
-
-  aux.x += center.x;
-  aux.y += center.y;
-
-  return aux;
-}
-
 void _rotate_space_ship(SPACE_SHIP *ss, float degrees) {
-  ss->tip = _rotate_formula(ss->tip, ss->center, degrees);
-  ss->left_p = _rotate_formula(ss->left_p, ss->center, degrees);
-  ss->right_p = _rotate_formula(ss->right_p, ss->center, degrees);
+  ss->tip = rotate_point(ss->tip, ss->center, degrees);
+  ss->left_p = rotate_point(ss->left_p, ss->center, degrees);
+  ss->right_p = rotate_point(ss->right_p, ss->center, degrees);
 }
 
 void _set_position(SPACE_SHIP *ss, float x, float y) {
 
-  if (isGreater(y, ss->display_height))
+  if (isGreater(y, ss->display.y))
     ss->center.y = 0.0f;
   else if (isLess(y, 0.0))
-    ss->center.y = ss->display_height;
+    ss->center.y = ss->display.y;
   else
     ss->center.y = y;
 
-  if (isGreater(x, ss->display_width))
+  if (isGreater(x, ss->display.x))
     ss->center.x = 0.0f;
   else if (isLess(x, 0.0))
-    ss->center.x = ss->display_width;
+    ss->center.x = ss->display.x;
   else
     ss->center.x = x;
 
@@ -92,10 +74,16 @@ SPACE_SHIP *space_ship_create(int display_width, int display_height) {
   if (!ss)
     return NULL;
 
-  ss->display_width = display_width;
-  ss->display_height = display_height;
+  ss->display.x = display_width;
+  ss->display.y = display_height;
 
   _set_position(ss, display_width/2.0f, display_height/2.0f);
+
+  ss->c = cannon_create(ss->display);
+  if (!ss->c) {
+    free(ss);
+    return NULL;
+  }
 
   return ss;
 }
@@ -157,6 +145,7 @@ void space_ship_notify_keys(SPACE_SHIP *ss, KEYS pressed_keys) {
   }
   _space_ship_move(ss, pressed_keys);
   _space_ship_rotate(ss, pressed_keys);
+  cannon_shoot(ss->c, ss->center, ss->rotation_degrees, pressed_keys);
 }
 
 void space_ship_draw(SPACE_SHIP *ss) {
@@ -172,6 +161,7 @@ void space_ship_draw(SPACE_SHIP *ss) {
 			  ss->right_p.x,
 			  ss->right_p.y,
 			  al_map_rgb(255, 255, 255));
+  cannon_draw(ss->c);
 }
 
 void space_ship_destroy(SPACE_SHIP *ss) {
@@ -179,5 +169,6 @@ void space_ship_destroy(SPACE_SHIP *ss) {
     printf("Space ship is null!\n");
     return ;
   }
+  cannon_destroy(ss->c);
   free(ss);
 }
