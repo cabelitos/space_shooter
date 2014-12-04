@@ -35,13 +35,13 @@ struct _SPACE_SHIP {
   CANNON *c;
 };
 
-void _rotate_space_ship(SPACE_SHIP *ss, float degrees) {
+static void _rotate_space_ship(SPACE_SHIP *ss, float degrees) {
   ss->tip = rotate_point(ss->tip, ss->center, degrees);
   ss->left_p = rotate_point(ss->left_p, ss->center, degrees);
   ss->right_p = rotate_point(ss->right_p, ss->center, degrees);
 }
 
-void _set_position(SPACE_SHIP *ss, float x, float y) {
+static void _set_position(SPACE_SHIP *ss, float x, float y) {
 
   if (isGreater(y, ss->display.y))
     ss->center.y = 0.0f;
