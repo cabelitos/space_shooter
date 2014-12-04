@@ -15,13 +15,13 @@ struct _GAME {
   SPACE_SHIP *ss;
 };
 
-GAME *game_init(ALLEGRO_DISPLAY_MODE mode) {
+GAME *game_init(POINT display) {
   GAME *game = calloc(1, sizeof(GAME));
 
   if (!game)
     return NULL;
 
-  game->display = al_create_display(mode.width, mode.height);
+  game->display = al_create_display(display.x, display.y);
   if (!game->display)
     goto err_display;
 
@@ -30,8 +30,7 @@ GAME *game_init(ALLEGRO_DISPLAY_MODE mode) {
   if (!game->events)
     goto err_events;
 
-  game->ss = space_ship_create(al_get_display_width(game->display),
-			       al_get_display_height(game->display));
+  game->ss = space_ship_create(display);
 
   if (!game->ss)
     goto err_ss;

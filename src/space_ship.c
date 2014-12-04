@@ -69,15 +69,14 @@ static void _set_position(SPACE_SHIP *ss, float x, float y) {
   _rotate_space_ship(ss, ss->rotation_degrees);
 }
 
-SPACE_SHIP *space_ship_create(int display_width, int display_height) {
+SPACE_SHIP *space_ship_create(POINT display) {
   SPACE_SHIP *ss = calloc(1, sizeof(SPACE_SHIP));
   if (!ss)
     return NULL;
 
-  ss->display.x = display_width;
-  ss->display.y = display_height;
+  ss->display = display;
 
-  _set_position(ss, display_width/2.0f, display_height/2.0f);
+  _set_position(ss, display.x/2.0f, display.y/2.0f);
 
   ss->c = cannon_create(ss->display);
   if (!ss->c) {

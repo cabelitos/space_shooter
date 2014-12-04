@@ -4,7 +4,7 @@
 
 typedef struct _SPACE_SHIP SPACE_SHIP;
 
-SPACE_SHIP *space_ship_create(int display_width, int display_height);
+SPACE_SHIP *space_ship_create(POINT display);
 
 void space_ship_notify_keys(SPACE_SHIP *ss, KEYS pressed_keys);
 

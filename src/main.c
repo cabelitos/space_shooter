@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <allegro5/allegro_primitives.h>
+
 #include "game.h"
 
 int main(int argc, char **argv) {
-  ALLEGRO_DISPLAY_MODE mode;
+  ALLEGRO_MONITOR_INFO info;
   GAME *game;
+  POINT p;
   (void) argc;
   (void) argv;
 
@@ -22,13 +24,16 @@ int main(int argc, char **argv) {
     printf("Could not init the primitives addon!\n");
     return -1;
   }
- 
-  if (!al_get_display_mode(al_get_num_display_modes() - 1, &mode)) {
+
+  if (!al_get_monitor_info(al_get_num_video_adapters() - 1, &info)) {
     printf("Could not retrive the display mode!\n");
     return -1;
   }
 
-  game = game_init(mode);
+  p.x = info.x2 - info.x1;
+  p.y = info.y2 - info.y1;
+
+  game = game_init(p);
   if (!game) {
     printf("Could not init the game!\n");
     return -1;
