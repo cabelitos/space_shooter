@@ -9,7 +9,7 @@
 
 #define THICKNESS (3.0f)
 #define LASER_HEIGHT (10.0f)
-#define LASER_SPEED (10.0f)
+#define LASER_SPEED (20.0f)
 #define MAX_LASERS_AT_ONCE (5)
 #define NOPE (10000)
 
