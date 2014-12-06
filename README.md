@@ -6,17 +6,14 @@ An asteroids game made using the Allegro library.
 
 Depends on
 ----------
-[Allegro 5](http://alleg.sourceforge.net/)
+[Allegro 5](http://alleg.sourceforge.net/) [version 5.1]
 
 
 Setup on OS X
 ----------
-
-If you're on Yosemite use install allegro HEAD, as the 5.0 branch has a bug that will make the app crash.
-
 ```shell
-
-brew install allegro5 # or use brew install allegro5 --HEAD on Yosemite
+brew tap homebrew/versions
+brew install allegro5 --HEAD
 cd /path/to/space_shooter
 cmake .
 make
@@ -24,15 +21,7 @@ make
 
 ```
 
-Setup on Linux (Fedora)
+Setup on other plataforms
 ----------
+You probably will need to compile Allegro yourself. [Instructions here](https://wiki.allegro.cc/index.php?title=Getting_Started#Installing_From_Sources)
 
-```shell
-
-sudo yum install allegro5-devel
-cd /path/to/space_shooter
-cmake .
-make
-./space_shooter
-
-```
