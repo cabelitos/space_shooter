@@ -131,7 +131,7 @@ static void _space_ship_rotate(SPACE_SHIP *ss, KEYS pressed_keys) {
 
   ss->rotation_degrees += degrees;
 
-  if (isGreater(fabs(ss->rotation_degrees), M_PI * 2.0))
+  if (isGreater(fabs(ss->rotation_degrees), M_DOUBLE_PI))
     ss->rotation_degrees = 0.0f;
 
   _rotate_space_ship(ss, degrees);

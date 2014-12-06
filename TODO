@@ -1,3 +1,2 @@
-* Scale the space ship size according to the screen size.
-* Create the asteroids.
 * Implement collision
+* The asteroids look very ugly, create a new model for it.

@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "game.h"
 #include "space_ship.h"
+#include "asteroids_coordinator.h"
 
 #define FPS (60)
 
@@ -13,6 +14,7 @@ struct _GAME {
   ALLEGRO_EVENT_QUEUE *events;
   ALLEGRO_TIMER *timer;
   SPACE_SHIP *ss;
+  ASTEROIDS_COORDINATOR *ac;
 };
 
 GAME *game_init(POINT display) {
@@ -40,6 +42,11 @@ GAME *game_init(POINT display) {
   if (!game->timer)
     goto err_timer;
 
+  game->ac = asteroids_coordinator_create(display);
+
+  if (!game->ac)
+    goto err_ac;
+
   al_register_event_source(game->events,
 			   al_get_display_event_source(game->display));
   al_register_event_source(game->events,
@@ -50,6 +57,8 @@ GAME *game_init(POINT display) {
   al_set_window_title(game->display, "Space shooter");
   return game;
 
+ err_ac:
+  al_destroy_timer(game->timer);
  err_timer:
   space_ship_destroy(game->ss);
  err_ss:
@@ -120,11 +129,13 @@ void game_run(GAME *game) {
     }
 
     space_ship_notify_keys(game->ss, pressed_keys);
+    asteroids_coordinator_move_asteroids(game->ac);
 
     if (redraw && al_event_queue_is_empty(game->events)) {
       redraw = false;
       al_clear_to_color(al_map_rgb(0,0,0));
       space_ship_draw(game->ss);
+      asteroids_coordinator_draw(game->ac);
       al_flip_display();
     }
   }
@@ -136,6 +147,7 @@ void game_shutdown(GAME *game) {
     return;
   }
 
+  asteroids_coordinator_destroy(game->ac);
   al_destroy_timer(game->timer);
   space_ship_destroy(game->ss);
   al_destroy_event_queue(game->events);

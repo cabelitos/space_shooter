@@ -43,7 +43,7 @@ else() #We did not find allegro 5.1, try 5.0 and up
   link_directories(${ALLEGRO_5_0_LIBRARY_DIRS}  ${ALLEGRO_PRIMITIVES_5_0_LIBRARY_DIRS} ${ALLEGRO_MAIN_5_0_LIBRARY_DIRS})
 endif()
 
-add_executable(space_shooter src/main.c src/game.c src/space_ship.c src/float_compare.c src/cannon.c src/utils.c)
+add_executable(space_shooter src/main.c src/game.c src/space_ship.c src/float_compare.c src/cannon.c src/utils.c src/asteroids_coordinator.c)
 
 if (ALLEGRO_FOUND)
   target_link_libraries(space_shooter ${ALLEGRO_LIBRARIES} ${ALLEGRO_PRIMITIVES_LIBRARIES} ${ALLEGRO_MAIN_LIBRARIES} ${MATH_LIBS})

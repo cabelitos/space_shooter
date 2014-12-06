@@ -19,9 +19,11 @@ typedef struct _POINT {
 
 #ifndef M_PI
 
-#define M_PI 3.14159265358979323846264338327
+#define M_PI (3.14159265358979323846264338327f)
 
 #endif
+
+#define M_DOUBLE_PI ((M_PI) * 2.0f)
 
 POINT rotate_point(POINT p, POINT center, float degrees);
 bool isInvisible(POINT p, POINT display);
