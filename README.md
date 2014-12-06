@@ -23,5 +23,5 @@ make
 
 Setup on other plataforms
 ----------
-You probably will need to compile Allegro yourself. [Instructions here](https://wiki.allegro.cc/index.php?title=Getting_Started#Installing_From_Sources)
+You probably will need to compile Allegro by yourself. [Instructions here](https://wiki.allegro.cc/index.php?title=Getting_Started#Installing_From_Sources)
 
