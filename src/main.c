@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 
 #include "game.h"
 
@@ -17,6 +19,16 @@ int main(int argc, char **argv) {
 
   if (!al_install_keyboard()) {
     printf("Could not setup the keyboard!\n");
+    return -1;
+  }
+
+  if (!al_init_font_addon()) {
+    printf("Could not init the font addon");
+    return -1;
+  }
+
+  if (!al_init_ttf_addon()) {
+    printf("Could not init the ttf addon");
     return -1;
   }
 

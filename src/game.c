@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <limits.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 
 #include "utils.h"
 #include "game.h"
@@ -10,6 +12,7 @@
 #include "asteroids_coordinator.h"
 
 #define FPS (60)
+#define FONT_SIZE (72)
 
 struct _GAME {
   ALLEGRO_DISPLAY *display;
@@ -17,7 +20,21 @@ struct _GAME {
   ALLEGRO_TIMER *timer;
   SPACE_SHIP *ss;
   ASTEROIDS_COORDINATOR *ac;
+  ALLEGRO_FONT *font;
 };
+
+static ALLEGRO_FONT *_load_font(void) {
+  ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+  if (!path) {
+    printf("Path is null!\n");
+    return NULL;
+  }
+  al_append_path_component(path, "res");
+  al_append_path_component(path, "fonts");
+  al_change_directory(al_path_cstr(path, ALLEGRO_NATIVE_PATH_SEP));
+  al_destroy_path(path);
+  return al_load_ttf_font("Times.ttf", FONT_SIZE, 0);
+}
 
 GAME *game_init(POINT display) {
   GAME *game = calloc(1, sizeof(GAME));
@@ -49,6 +66,11 @@ GAME *game_init(POINT display) {
   if (!game->ac)
     goto err_ac;
 
+  game->font = _load_font();
+
+  if (!game->font)
+    goto err_font;
+
   al_register_event_source(game->events,
 			   al_get_display_event_source(game->display));
   al_register_event_source(game->events,
@@ -59,6 +81,8 @@ GAME *game_init(POINT display) {
   al_set_window_title(game->display, "Space shooter");
   return game;
 
+ err_font:
+  asteroids_coordinator_destroy(game->ac);
  err_ac:
   al_destroy_timer(game->timer);
  err_timer:
@@ -173,6 +197,14 @@ void game_run(GAME *game) {
       al_clear_to_color(al_map_rgb(0,0,0));
       space_ship_draw(game->ss);
       asteroids_coordinator_draw(game->ac);
+      if (ship_collision) {
+	al_draw_text(game->font,
+		     al_map_rgb(255, 255, 255),
+		     al_get_display_width(game->display)/2,
+		     al_get_display_height(game->display)/2,
+		     ALLEGRO_ALIGN_CENTRE,
+		     "Game Over!");
+      }
       al_flip_display();
     }
   }
@@ -184,6 +216,7 @@ void game_shutdown(GAME *game) {
     return;
   }
 
+  al_destroy_font(game->font);
   asteroids_coordinator_destroy(game->ac);
   al_destroy_timer(game->timer);
   space_ship_destroy(game->ss);
