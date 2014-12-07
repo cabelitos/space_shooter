@@ -1,2 +1,5 @@
-* Implement collision
 * The asteroids look very ugly, create a new model for it.
+* Implement score counter.
+* Maybe implement some collision animations.
+* Maybe implement a Menu UI ?
+* Try to support Allegro 5.0 by not using al_draw_filled_polygon() (AKA implement my own polygon function)

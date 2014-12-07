@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <math.h>
+#include <string.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
@@ -37,6 +38,7 @@ ASTEROIDS_COORDINATOR *asteroids_coordinator_create(POINT display) {
     ac->asteroids[i].pos = object_position_create(ASTEROID_POINTS);
     if (!ac->asteroids[i].pos)
       goto err_pos;
+    ac->asteroids[i].pos->id = i;
   }
 
   srand(time(NULL));
@@ -132,6 +134,46 @@ void asteroids_coordinator_move_asteroids(ASTEROIDS_COORDINATOR *ac) {
 
     ac->asteroids[i].valid = _set_asteroid_position(&ac->asteroids[i],
 						    ac->display);
+  }
+}
+
+OBJECT_POSITION *asteroids_coordinator_get_asteroids_positions(ASTEROIDS_COORDINATOR *ac,
+							       unsigned *size) {
+  unsigned i;
+  OBJECT_POSITION *list = NULL, *aux;
+  size_t total_len = 0, obj_size = sizeof(OBJECT_POSITION);
+
+  if (!ac || !size)
+    return list;
+
+  for (i = 0; i < MAX_ASTEROIDS; i++) {
+    if (!ac->asteroids[i].valid)
+      continue;
+    aux = realloc(list, total_len + obj_size);
+    if (!aux)
+      goto exit;
+    list = aux;
+    memcpy((void*)list + total_len, ac->asteroids[i].pos, obj_size);
+    total_len += obj_size;
+  }
+  *size = total_len / obj_size;
+  return list;
+ exit:
+  free(list);
+  return NULL;
+}
+
+void asteroids_coordinator_remove_asteroid(ASTEROIDS_COORDINATOR *ac, unsigned id) {
+  unsigned i;
+
+  if (!ac)
+    return;
+
+  for (i = 0; i < MAX_ASTEROIDS; i++) {
+    if (ac->asteroids[i].pos->id == id) {
+      ac->asteroids[i].valid = false;
+      break;
+    }
   }
 }
 

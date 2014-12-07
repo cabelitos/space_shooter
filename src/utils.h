@@ -22,6 +22,7 @@ typedef struct _OBJECT_POSITION {
   unsigned points_size;
   POINT center;
   float rotation;
+  unsigned id;
 } OBJECT_POSITION;
 
 #ifndef M_PI

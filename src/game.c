@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <limits.h>
 
 #include "utils.h"
 #include "game.h"
 #include "space_ship.h"
+#include "cannon.h"
 #include "asteroids_coordinator.h"
 
 #define FPS (60)
@@ -70,9 +72,40 @@ GAME *game_init(POINT display) {
   return NULL;
 }
 
+static bool _detect_collisions(GAME *game) {
+  unsigned asteroids_size = 0, id, i;
+  unsigned *toRemove;
+  bool ship_collision = false;
+  OBJECT_POSITION *asteroids =
+    asteroids_coordinator_get_asteroids_positions(game->ac, &asteroids_size);
+
+  toRemove = cannon_detect_collisions(space_ship_get_cannon(game->ss),
+				      asteroids,
+				      asteroids_size);
+  if (toRemove) {
+    for (i = 0; i < asteroids_size; i++) {
+      if (toRemove[i] == UINT_MAX)
+	break;
+      asteroids_coordinator_remove_asteroid(game->ac, toRemove[i]);
+    }
+    free(toRemove);
+    free(asteroids);
+    asteroids =
+      asteroids_coordinator_get_asteroids_positions(game->ac, &asteroids_size);
+  }
+  id = space_ship_detect_collisions(game->ss, asteroids,
+				    asteroids_size);
+  if (id != UINT_MAX) {
+    asteroids_coordinator_remove_asteroid(game->ac, id);
+    ship_collision = true;
+  }
+  free(asteroids);
+  return ship_collision;
+}
+
 void game_run(GAME *game) {
   ALLEGRO_EVENT event;
-  bool redraw = false;
+  bool redraw = false, ship_collision = false;
   KEYS pressed_keys;
   if (!game) {
     printf("Game is null!\n");
@@ -128,8 +161,12 @@ void game_run(GAME *game) {
       }
     }
 
-    space_ship_notify_keys(game->ss, pressed_keys);
     asteroids_coordinator_move_asteroids(game->ac);
+
+    if (!ship_collision) {
+      space_ship_notify_keys(game->ss, pressed_keys);
+      ship_collision = _detect_collisions(game);
+    }
 
     if (redraw && al_event_queue_is_empty(game->events)) {
       redraw = false;

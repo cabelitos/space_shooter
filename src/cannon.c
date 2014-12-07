@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdbool.h>
+#include <limits.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
 #include "cannon.h"
+#include "float_compare.h"
 
 #define THICKNESS (3.0f)
 #define LASER_HEIGHT (10.0f)
@@ -34,6 +36,7 @@ CANNON *cannon_create(POINT display) {
     c->lasers[i].pos = object_position_create(2);
     if (!c->lasers[i].pos)
       goto err_pos;
+    c->lasers[i].pos->id = i;
   }
   return c;
 
@@ -94,6 +97,56 @@ void cannon_shoot(CANNON *c, POINT origin, float rotation,
       printf("Something is wrong, could not find a index!\n");
   }
   _move_lasers(c);
+}
+
+unsigned *cannon_detect_collisions(CANNON *c,
+				   OBJECT_POSITION *asteroids,
+				   unsigned asteroids_size) {
+  unsigned i, j, k, aNext, removedI;
+  float minX, maxX, minY, maxY;
+  unsigned *remove;
+
+  if (!c)
+    return NULL;
+
+  remove = malloc(sizeof(unsigned) * asteroids_size);
+  if (!remove)
+    return NULL;
+  removedI = 0;
+  for (i = 0; i < asteroids_size; i++)
+    remove[i] = UINT_MAX;
+
+  for (i = 0; i < asteroids_size; i++) {
+    for (j = 0; j < asteroids[i].points_size; j++) {
+      aNext = j + 1;
+      if (aNext == asteroids[i].points_size)
+	aNext = 0;
+
+      minX = fminf(asteroids[i].points[j].x, asteroids[i].points[aNext].x);
+      maxX = fmaxf(asteroids[i].points[j].x, asteroids[i].points[aNext].x);
+      minY = fminf(asteroids[i].points[j].y, asteroids[i].points[aNext].y);
+      maxY = fmaxf(asteroids[i].points[j].y, asteroids[i].points[aNext].y);
+
+      for (k = 0; k < MAX_LASERS_AT_ONCE; k++) {
+	if (!c->lasers[k].valid)
+	  continue;
+	if ((isGreater(c->lasers[k].pos->points[0].x, minX)
+	     && isLess(c->lasers[k].pos->points[0].x, maxX)
+	     && isGreater(c->lasers[k].pos->points[0].y, minY)
+	     && isLess(c->lasers[k].pos->points[0].y, maxY))
+	    ||
+	    (isGreater(c->lasers[k].pos->points[1].x, minX)
+	     && isLess(c->lasers[k].pos->points[1].x, maxX)
+	     && isGreater(c->lasers[k].pos->points[1].y, minY)
+	     && isLess(c->lasers[k].pos->points[1].y, maxY))) {
+	  c->lasers[k].valid = false;
+	  c->totalLasers--;
+	  remove[removedI++] = asteroids[i].id;
+	}
+      }
+    }
+  }
+  return remove;
 }
 
 void cannon_draw(CANNON *c) {

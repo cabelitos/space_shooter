@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdbool.h>
+#include <limits.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
 #include "float_compare.h"
 #include "space_ship.h"
-#include "cannon.h"
 
 //This height should be scaled.
 #define SPACE_SHIP_HEIGHT (24.0f)
@@ -22,6 +22,7 @@ struct _SPACE_SHIP {
   OBJECT_POSITION *pos;
 
   POINT display;
+  bool draw;
 
   float acceleration;
 
@@ -66,13 +67,14 @@ SPACE_SHIP *space_ship_create(POINT display) {
 
   if (!ss->pos)
     goto err_pos;
-
+  ss->pos->id = 0;
   _set_position(ss, display.x/2.0f, display.y/2.0f);
 
   ss->c = cannon_create(ss->display);
   if (!ss->c)
     goto err_cannon;
 
+  ss->draw = true;
   return ss;
 
  err_cannon:
@@ -143,19 +145,58 @@ void space_ship_notify_keys(SPACE_SHIP *ss, KEYS pressed_keys) {
   cannon_shoot(ss->c, ss->pos->center, ss->pos->rotation, pressed_keys);
 }
 
+unsigned space_ship_detect_collisions(SPACE_SHIP *ss,
+				  OBJECT_POSITION *asteroids,
+				  unsigned asteroids_size) {
+  unsigned i, j;
+  float minX, maxX, minY, maxY;
+
+  if (!ss)
+    return UINT_MAX;
+
+  minX = ss->display.x * 2.0f;
+  minY = ss->display.y * 2.0f;
+  maxX = maxY = -100.0f;
+
+  for (i = 0; i < ss->pos->points_size; i++) {
+    minX = fminf(ss->pos->points[i].x, minX);
+    minY = fminf(ss->pos->points[i].y, minY);
+    maxX = fmaxf(ss->pos->points[i].x, maxX);
+    maxY = fmaxf(ss->pos->points[i].y, maxY);
+  }
+
+  for (i = 0; i < asteroids_size; i++) {
+    for (j = 0; j < asteroids[i].points_size; j++) {
+      if (isGreater(asteroids[i].points[j].x, minX) && isLess(asteroids[i].points[j].x, maxX) &&
+	  isGreater(asteroids[i].points[j].y, minY) && isLess(asteroids[i].points[j].y, maxY)) {
+	ss->draw = false;
+	return asteroids[i].id;
+      }
+    }
+  }
+  return UINT_MAX;
+}
+
+CANNON *space_ship_get_cannon(SPACE_SHIP *ss) {
+  if (!ss)
+    return NULL;
+  return ss->c;
+}
+
 void space_ship_draw(SPACE_SHIP *ss) {
   if (!ss) {
     printf("Space ship is null!\n");
     return;
   }
 
-  al_draw_filled_triangle(ss->pos->points[0].x,
-			  ss->pos->points[0].y,
-			  ss->pos->points[1].x,
-			  ss->pos->points[1].y,
-			  ss->pos->points[2].x,
-			  ss->pos->points[2].y,
-			  al_map_rgb(255, 255, 255));
+  if (ss->draw)
+    al_draw_filled_triangle(ss->pos->points[0].x,
+			    ss->pos->points[0].y,
+			    ss->pos->points[1].x,
+			    ss->pos->points[1].y,
+			    ss->pos->points[2].x,
+			    ss->pos->points[2].y,
+			    al_map_rgb(255, 255, 255));
   cannon_draw(ss->c);
 }
 
