@@ -7,7 +7,7 @@
 #include <allegro5/allegro_primitives.h>
 
 #include "cannon.h"
-#include "float_compare.h"
+#include "compare_float.h"
 
 #define THICKNESS (3.0f)
 #define LASER_HEIGHT (10.0f)

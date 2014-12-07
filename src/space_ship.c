@@ -6,7 +6,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
-#include "float_compare.h"
+#include "compare_float.h"
 #include "space_ship.h"
 
 //This height should be scaled.

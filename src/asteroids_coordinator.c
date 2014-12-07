@@ -8,7 +8,7 @@
 #include <allegro5/allegro_primitives.h>
 
 #include "asteroids_coordinator.h"
-#include "float_compare.h"
+#include "compare_float.h"
 
 #define MAX_ASTEROIDS (6)
 #define MAX_ASTEROID_SPEED (3)

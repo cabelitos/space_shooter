@@ -1,6 +1,6 @@
 #include <float.h>
 #include <math.h>
-#include "float_compare.h"
+#include "compare_float.h"
 
 #define EPSILON (FLT_EPSILON)
 

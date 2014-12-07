@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "utils.h"
-#include "float_compare.h"
+#include "compare_float.h"
 
 bool isInvisible(POINT p, POINT display) {
   return isGreater(p.x, display.x) || isGreater(p.y, display.y) ||
