@@ -15,6 +15,8 @@ unsigned space_ship_detect_collisions(SPACE_SHIP *ss,
 				      OBJECT_POSITION *asteroids,
 				      unsigned asteroids_size);
 
+void space_ship_restart(SPACE_SHIP *ss);
+
 void space_ship_draw(SPACE_SHIP *ss);
 
 void space_ship_destroy(SPACE_SHIP *ss);

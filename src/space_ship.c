@@ -134,6 +134,14 @@ static void _space_ship_rotate(SPACE_SHIP *ss, KEYS pressed_keys) {
   object_position_rotate_points(ss->pos, rads);
 }
 
+void space_ship_restart(SPACE_SHIP *ss) {
+  if (!ss)
+    return;
+  ss->draw = true;
+  ss->pos->rotation = ss->acceleration = 0.0f;
+  _set_position(ss, ss->display.x/2.0f, ss->display.y/2.0f);
+}
+
 void space_ship_notify_keys(SPACE_SHIP *ss, KEYS pressed_keys) {
   if (!ss) {
     printf("Space ship is null!\n");

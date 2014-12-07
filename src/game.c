@@ -129,7 +129,7 @@ static bool _detect_collisions(GAME *game) {
 
 void game_run(GAME *game) {
   ALLEGRO_EVENT event;
-  bool redraw = false, ship_collision = false;
+  bool redraw, ship_collision, retry;
   KEYS pressed_keys;
   if (!game) {
     printf("Game is null!\n");
@@ -142,7 +142,7 @@ void game_run(GAME *game) {
   al_start_timer(game->timer);
 
   pressed_keys = NOT_SET;
-
+  redraw = ship_collision = retry = false;
   while (1) {
     pressed_keys &= ~SPACE;
     al_wait_for_event(game->events, &event);
@@ -182,6 +182,9 @@ void game_run(GAME *game) {
       case ALLEGRO_KEY_SPACE:
 	pressed_keys |= SPACE;
 	break;
+      case ALLEGRO_KEY_R:
+	retry = true;
+	break;
       }
     }
 
@@ -203,7 +206,12 @@ void game_run(GAME *game) {
 		     al_get_display_width(game->display)/2,
 		     al_get_display_height(game->display)/2,
 		     ALLEGRO_ALIGN_CENTRE,
-		     "Game Over!");
+		     "Game Over. Press 'r' to retry.");
+      }
+      if (retry && ship_collision) {
+	retry = false;
+	ship_collision = false;
+	space_ship_restart(game->ss);
       }
       al_flip_display();
     }
