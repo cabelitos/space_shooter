@@ -13,7 +13,7 @@
 #define LASER_HEIGHT (10.0f)
 #define LASER_SPEED (20.0f)
 #define MAX_LASERS_AT_ONCE (5)
-#define NOPE (10000)
+#define NOPE (UINT_MAX)
 
 typedef struct _LASER {
   OBJECT_POSITION *pos;
