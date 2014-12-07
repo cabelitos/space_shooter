@@ -2,6 +2,9 @@
 
 #include <math.h>
 #include <stdbool.h>
+#ifndef ALLEGRO_HAS_POLYGON_FUNCTION
+#include <allegro5/allegro.h>
+#endif
 
 typedef enum _KEYS {
   NOT_SET = 0,
@@ -39,3 +42,8 @@ bool isInvisible(POINT p, POINT display);
 OBJECT_POSITION *object_position_create(unsigned points_size);
 void object_position_destroy(OBJECT_POSITION *obj);
 void object_position_rotate_points(OBJECT_POSITION *obj, float rads);
+
+#ifndef ALLEGRO_HAS_POLYGON_FUNCTION
+#define POLYGON_LINE_THICKNESS (1.0f)
+void draw_polygon(POINT *points, unsigned size, ALLEGRO_COLOR color);
+#endif

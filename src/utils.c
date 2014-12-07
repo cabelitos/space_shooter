@@ -1,5 +1,8 @@
 #include <math.h>
 #include <stdlib.h>
+#ifndef ALLEGRO_HAS_POLYGON_FUNCTION
+#include <allegro5/allegro_primitives.h>
+#endif
 
 #include "utils.h"
 #include "compare_float.h"
@@ -45,3 +48,20 @@ void object_position_rotate_points(OBJECT_POSITION *obj, float rads) {
   for (i = 0; i < obj->points_size; i++)
     obj->points[i] = rotate_point(obj->points[i], obj->center, rads);
 }
+
+#ifndef ALLEGRO_HAS_POLYGON_FUNCTION
+void draw_polygon(POINT *points, unsigned size, ALLEGRO_COLOR color) {
+  unsigned i, j;
+  for (i = 0; i < size; i++) {
+    j = i + 1;
+    if (j == size)
+      j = 0;
+    al_draw_line(points[i].x,
+		 points[i].y,
+		 points[j].x,
+		 points[j].y,
+		 color,
+		 POLYGON_LINE_THICKNESS);
+  }
+}
+#endif
