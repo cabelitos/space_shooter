@@ -21,17 +21,6 @@ make
 
 ```
 
-Setup on Linux (Fedora)
-----------
-```shell
-sudo yum install allegro5-devel
-cd /path/to/space_shooter
-cmake .
-make
-./space_shooter
-
-```
-
 Setup on other plataforms
 ----------
 You probably will need to compile Allegro by yourself. [Instructions here](https://wiki.allegro.cc/index.php?title=Getting_Started#Installing_From_Sources)

@@ -187,15 +187,9 @@ void asteroids_coordinator_draw(ASTEROIDS_COORDINATOR *ac) {
     if (!ac->asteroids[i].valid)
       continue;
 
-#ifdef ALLEGRO_HAS_POLYGON_FUNCTION
     al_draw_filled_polygon((float*)ac->asteroids[i].pos->points,
 			   ASTEROID_POINTS,
 			   al_map_rgb(120, 120, 120));
-#else
-    draw_polygon(ac->asteroids[i].pos->points,
-		 ASTEROID_POINTS,
-		 al_map_rgb(120, 120, 120));
-#endif
   }
 }
 
